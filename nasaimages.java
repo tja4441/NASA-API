@@ -1,7 +1,4 @@
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -18,14 +15,14 @@ public class nasaimages {
     @SuppressWarnings("deprecation")
     public static void main(String[] args) throws IOException {
         String fileLocation = "C:\\Users\\Tammy\\Pictures\\Space\\";
-        String date = "2024-03-05";
+        String date = "";
 
         String base = "https://api.nasa.gov/planetary/apod?api_key=kO6aPqrgkUVuvFYwiv4mlIHaHvWWXRRjvEg1dBam";
-        String[] info = {"","","","","","","",""};
+        String[] info = {"media_type","hdurl","title","explanation"};
         search(date(base, date), info);
-        System.out.println(info[3]);
-        InputStream in = new URL(info[3]).openStream();
-        Files.copy(in, Paths.get(fileLocation+info[6]+".jpg"), StandardCopyOption.REPLACE_EXISTING);
+        System.out.println(info[1]);
+        InputStream in = new URL(info[1]).openStream();
+        Files.copy(in, Paths.get(fileLocation+info[2]+".jpg"), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static String date(String existingURI, String date) {
@@ -47,7 +44,11 @@ public class nasaimages {
             String[] fields = response.body().split("\",\"");
             for(int i = 0; i < fields.length; i++){
                 String[] subFields = fields[i].split("\":\"");
-                info[i] = subFields[1];
+                for(int j = 0; j < info.length; j++){
+                    if(info[j].equals(subFields[0])){
+                        info[j] = subFields[1];
+                    }
+                }
             }
         } catch (URISyntaxException e) {
             e.printStackTrace();
